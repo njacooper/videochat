@@ -1,0 +1,21 @@
+@tailwind base;
+
+@layer base {
+  body {
+    @apply bg-lime-100;
+  }
+
+  h1 {
+    @apply text-4xl font-bold;
+  }
+}
+
+@tailwind components;
+
+@layer components {
+  .wrapper {
+    @apply bg-blue-200;
+  }
+}
+
+@tailwind utilities;

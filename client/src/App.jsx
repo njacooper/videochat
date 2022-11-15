@@ -1,3 +1,5 @@
+import './assets/styles.css'
+
 import { useEffect } from 'react'
 import { io } from 'socket.io-client'
 
@@ -13,7 +15,7 @@ function App() {
   }, [])
 
   return (
-    <main>
+    <main className='wrapper'>
       <h1>Video Chat</h1>
     </main>
   )
