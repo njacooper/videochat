@@ -1,6 +1,6 @@
 import './assets/styles.css'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { io } from 'socket.io-client'
 
 const socket = io('http://localhost:8080')
@@ -13,11 +13,27 @@ function App() {
   const [isIncomingCall, setIsIncomingCall] = useState(true)
   const [isOutgoingCall, setIsOutgoingCall] = useState(false)
 
+  const [stream, setStream] = useState()
+
+  const myStream = useRef()
+  const peerStream = useRef()
+
   // Test connection to socket server
   useEffect(() => {
     socket.on('connect', () => {
       console.log('socket.id: ', socket.id)
     })
+  }, [])
+
+  useEffect(() => {
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        setStream(stream)
+        myStream.current.srcObject = stream
+      })
+
+    socket.on('myId', (id) => setMyId(id))
   }, [])
 
   function handleCall() {
@@ -48,7 +64,12 @@ function App() {
           <div className="bg-green-500">
             <h2>You</h2>
             <div className="bg-red-500">
-              <video playsInline autoPlay />
+              <video
+                playsInline
+                autoPlay
+                ref={myStream}
+                className="object-cover w-[400px] h-[300px]"
+              />
             </div>
             <h3 className="m-4">ID: {myId}</h3>
           </div>
@@ -57,7 +78,12 @@ function App() {
             <h2>Them</h2>
 
             <div className="bg-yellow-500">
-              <video playsInline autoPlay />
+              <video
+                playsInline
+                autoPlay
+                ref={peerStream}
+                className="object-cover w-[400px] h-[300px]"
+              />
             </div>
 
             {isIncomingCall && !isActiveCall ? (

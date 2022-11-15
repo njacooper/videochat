@@ -563,8 +563,36 @@ h1 {
   display: flex;
 }
 
+.h-10 {
+  height: 2.5rem;
+}
+
+.h-\[300px\] {
+  height: 300px;
+}
+
 .w-\[960px\] {
   width: 960px;
+}
+
+.w-10 {
+  width: 2.5rem;
+}
+
+.w-\[200px\] {
+  width: 200px;
+}
+
+.w-\[600px\] {
+  width: 600px;
+}
+
+.w-\[500px\] {
+  width: 500px;
+}
+
+.w-\[400px\] {
+  width: 400px;
 }
 
 .flex-row {
@@ -620,6 +648,11 @@ h1 {
 .bg-stone-300 {
   --tw-bg-opacity: 1;
   background-color: rgb(214 211 209 / var(--tw-bg-opacity));
+}
+
+.object-cover {
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 
 .p-2 {
