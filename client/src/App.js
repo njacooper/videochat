@@ -44,6 +44,26 @@ function App () {
       setCallDetails({ from, signal })
       setIsIncomingCall(true)
     })
+
+    // When call is ended
+    socket.on('callEnded', () => {
+      console.log('received call ended...')
+
+      // Reset relevant state variables
+      setIsActiveCall(false)
+      setIsIncomingCall(false)
+      setIsOutgoingCall(false)
+      setCallDetails({})
+
+      // Reset connection
+      const peer = new Peer({ initiator: true, trickle: false, stream })
+      socket.off('callAccepted')
+      connRef.current = peer
+
+      // Replace peer stream with empty stream object
+      const emptyStream = new MediaStream()
+      peerStream.current.srcObject = emptyStream
+    })
   }, [])
 
   // Handle to making of a call
@@ -67,7 +87,7 @@ function App () {
     })
 
     socket.on('callAccepted', signal => {
-      console.log('call accepted')
+      console.log('call accepted', signal)
       setIsActiveCall(true)
 
       peer.signal(signal)
@@ -101,9 +121,14 @@ function App () {
   // Handle ending the call
   function handleEndCall () {
     console.log('Ending call...')
-    setIsActiveCall(false)
-    setIsIncomingCall(false)
-    setIsOutgoingCall(false)
+
+    console.log('to:', idToCall)
+    console.log('from:', myId)
+
+    socket.emit('endCall', {
+      to: idToCall || callDetails.from,
+      from: myId
+    })
   }
 
   return (
