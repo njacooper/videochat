@@ -132,16 +132,16 @@ function App () {
   }
 
   return (
-    <main className='w-[960px] text-center'>
+    <main className='w-[450px] md:w-[768px] text-center mx-auto'>
       <header>
         <h1 className='mb-8 mt-8'>Video Chat</h1>
       </header>
 
-      <section className=''>
-        <div className='flex flex-row w-[960px] justify-center'>
-          <div className='bg-green-500'>
-            <h2>You</h2>
-            <div className='bg-red-500'>
+      <section className='justify-center'>
+        <div className='grid grid-cols-1 gap-2 place-items-center md:grid-cols-2'>
+          <div className='bg-slate-200 rounded p-2'>
+            <h2 className='font-bold p-2 text-lg'>You</h2>
+            <div>
               <video
                 playsInline
                 autoPlay
@@ -149,13 +149,13 @@ function App () {
                 className='object-cover w-[400px] h-[300px]'
               />
             </div>
-            <h3 className='m-4'>ID: {myId}</h3>
+            <h3 className='m-4 font-bold p-3'>ID: {myId}</h3>
           </div>
 
-          <div className='bg-orange-500'>
-            <h2>Them</h2>
+          <div className='bg-slate-200 rounded p-2'>
+            <h2 className='font-bold p-2 text-lg'>Them</h2>
 
-            <div className='bg-yellow-500'>
+            <div className='bg-slate-900'>
               <video
                 playsInline
                 autoPlay
@@ -168,7 +168,7 @@ function App () {
               <>
                 <button
                   onClick={handleAnswerCall}
-                  className='bg-blue-500 p-3 mx-2'
+                  className='bg-blue-500 py-1 px-3 mx-2 text-white font-bold rounded my-6'
                 >
                   Answer
                 </button>
@@ -177,24 +177,31 @@ function App () {
             ) : null}
 
             {isActiveCall === true ? (
-              <button onClick={handleEndCall} className='bg-blue-500 p-3 mx-2'>
+              <button
+                onClick={handleEndCall}
+                className='bg-blue-500 py-1 px-3 mx-2 text-white font-bold rounded my-6'
+              >
                 End Call
               </button>
             ) : null}
 
             {!isOutgoingCall && !isIncomingCall && !isActiveCall && (
               <>
-                <span>Call: </span>
+                <span className='font-bold'>Call: </span>
 
                 <input
                   value={idToCall}
                   onChange={e => {
                     setIdToCall(e.target.value)
                   }}
-                  className='bg-white border-2 border-solid my-4 mx-2'
+                  placeholder='Enter Caller ID'
+                  className='bg-white border-2 border-solid my-4 mx-2 p-2 rounded'
                 />
 
-                <button onClick={handleCall} className='bg-blue-500 p-3 mx-2'>
+                <button
+                  onClick={handleCall}
+                  className='bg-blue-500 py-1 px-3 mx-2 text-white font-bold rounded'
+                >
                   Call
                 </button>
               </>
@@ -202,13 +209,31 @@ function App () {
           </div>
         </div>
       </section>
-      <div className='bg-stone-300'>
-        <p>myId: {myId}</p>
-        <p>idToCall: {idToCall}</p>
-        <p>isActiveCall: {isActiveCall.toString()}</p>
-        <p>isOutgoingCall: {isOutgoingCall.toString()}</p>
-        <p>isIncomingCall: {isIncomingCall.toString()}</p>
-        <p>callDetails.from: {callDetails.from}</p>
+      <div className='devData'>
+        <p>
+          <span>myId: </span>
+          {myId}
+        </p>
+        <p>
+          <span>idToCall: </span>
+          {idToCall}
+        </p>
+        <p>
+          <span>isActiveCall: </span>
+          {isActiveCall.toString()}
+        </p>
+        <p>
+          <span>isOutgoingCall: </span>
+          {isOutgoingCall.toString()}
+        </p>
+        <p>
+          <span>isIncomingCall: </span>
+          {isIncomingCall.toString()}
+        </p>
+        <p>
+          <span>callDetails.from: </span>
+          {callDetails.from}
+        </p>
       </div>
     </main>
   )

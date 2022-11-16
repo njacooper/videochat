@@ -16,6 +16,18 @@
   .wrapper {
     @apply bg-blue-200;
   }
+
+  .devData {
+    @apply bg-stone-700 text-white my-10 w-fit mx-auto p-6 rounded;
+  }
+
+  .devData p {
+    @apply text-left;
+  }
+
+  .devData p > span {
+    @apply font-bold;
+  }
 }
 
 @tailwind utilities;
