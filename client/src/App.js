@@ -3,14 +3,16 @@ import './assets/styles.css'
 import { useEffect, useState, useRef } from 'react'
 import { io } from 'socket.io-client'
 
+import Peer from 'simple-peer'
+
 const socket = io('http://localhost:8080')
 
 function App () {
-  const [myId, setMyId] = useState('abcid')
+  const [myId, setMyId] = useState('')
   const [idToCall, setIdToCall] = useState('')
 
   const [isActiveCall, setIsActiveCall] = useState(false)
-  const [isIncomingCall, setIsIncomingCall] = useState(true)
+  const [isIncomingCall, setIsIncomingCall] = useState(false)
   const [isOutgoingCall, setIsOutgoingCall] = useState(false)
 
   const [stream, setStream] = useState()
@@ -18,14 +20,12 @@ function App () {
   const myStream = useRef()
   const peerStream = useRef()
 
-  // Test connection to socket server
-  useEffect(() => {
-    socket.on('connect', () => {
-      console.log('socket.id: ', socket.id)
-    })
-  }, [])
+  const connRef = useRef()
+
+  const [callDetails, setCallDetails] = useState({})
 
   useEffect(() => {
+    // Stream webcam
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then(videoStream => {
@@ -33,7 +33,17 @@ function App () {
         myStream.current.srcObject = videoStream
       })
 
+    // Get unique Id
     socket.on('myId', id => setMyId(id))
+
+    // On 'makeCall' store call state and signal
+    socket.on('makeCall', ({ from, signal }) => {
+      console.log('setting call from: ', from)
+      console.log('setting call signal: ', signal)
+
+      setCallDetails({ from, signal })
+      setIsIncomingCall(true)
+    })
   }, [])
 
   // Handle to making of a call
@@ -41,6 +51,29 @@ function App () {
     console.log('Making call to: ', idToCall)
     setIsActiveCall(true)
     setIsOutgoingCall(true)
+
+    const peer = new Peer({ initiator: true, trickle: false, stream })
+
+    peer.on('signal', data => {
+      socket.emit('makeCall', {
+        to: idToCall,
+        signal: data,
+        from: myId
+      })
+    })
+
+    peer.on('stream', videoStream => {
+      peerStream.current.srcObject = videoStream
+    })
+
+    socket.on('callAccepted', signal => {
+      console.log('call accepted')
+      setIsActiveCall(true)
+
+      peer.signal(signal)
+    })
+
+    connRef.current = peer
   }
 
   // Handle the answering of a call
@@ -48,6 +81,21 @@ function App () {
     console.log('Answering call...')
     setIsActiveCall(true)
     setIsIncomingCall(false)
+
+    const peer = new Peer({ initiator: false, trickle: false, stream })
+
+    peer.on('signal', data => {
+      console.log('emitting answer call...')
+      socket.emit('answerCall', { signal: data, to: callDetails.from })
+    })
+
+    peer.on('stream', videoStream => {
+      peerStream.current.srcObject = videoStream
+    })
+
+    peer.signal(callDetails.signal)
+
+    connRef.current = peer
   }
 
   // Handle ending the call
@@ -135,6 +183,7 @@ function App () {
         <p>isActiveCall: {isActiveCall.toString()}</p>
         <p>isOutgoingCall: {isOutgoingCall.toString()}</p>
         <p>isIncomingCall: {isIncomingCall.toString()}</p>
+        <p>callDetails.from: {callDetails.from}</p>
       </div>
     </main>
   )
