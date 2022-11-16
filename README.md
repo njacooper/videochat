@@ -1,5 +1,7 @@
 # Video Chat
 
+![Video Chat Demo](demo.gif)
+
 To start the server:
 ```sh
 cd server
@@ -11,3 +13,4 @@ To start the client:
 cd client
 npm run start
 ```
+
