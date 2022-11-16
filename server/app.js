@@ -18,9 +18,15 @@ app.get('/', (req, res) => {
 })
 
 io.on('connection', socket => {
-  console.log('socket id: ', socket.id)
-
   socket.emit('myId', socket.id)
+
+  socket.on('makeCall', ({ to, from, signal }) => {
+    io.to(to).emit('makeCall', { to, from, signal })
+  })
+
+  socket.on('answerCall', ({ to, signal }) => {
+    io.to(to).emit('callAccepted', signal)
+  })
 })
 
 server.listen(port, () => {
