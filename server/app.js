@@ -25,7 +25,15 @@ io.on('connection', socket => {
   })
 
   socket.on('answerCall', ({ to, signal }) => {
+    console.log("call accepted: signal", signal)
     io.to(to).emit('callAccepted', signal)
+  })
+
+  socket.on('endCall', ({ to, from }) => {
+    console.log('data to', to)
+    console.log('data from', from)
+    io.to(to).emit('callEnded', from)
+    io.to(from).emit('callEnded', to)
   })
 })
 
